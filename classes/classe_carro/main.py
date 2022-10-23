@@ -1,185 +1,121 @@
-import threading
+
 import inquirer
 from carro import Carro, Veiculo, Menu
-from resumo_carro import Resumo
 from carro import Ia
-from att import Exibir
 
-marca = [
+marca_opcoes = [
         inquirer.List(
             'escolha',
             message = 'MARCA DO CARRO',
             choices = ('Toyota', 'Chevrolet', 'Ford', 'Fiat', 'Volkswagen')
         )
     ]
-respostas_marca = inquirer.prompt(marca)
+marca = inquirer.prompt(marca_opcoes)['escolha']
 
-if respostas_marca['escolha'] == 'Toyota':
-    modelo = [
+marcas_modelos_correspondentes = {
+    'Toyota': ('Corolla',  'RAV4', 'Hilux', 'Camry', 'Prius'),
+    'Chevrolet': ('Camaro', 'Cruze', 'Onix', 'Tracker', 'Spin'),
+    'Ford': ('Ka', 'Ranger', 'Fiesta', 'Ecosport', 'Edge'),
+    'Fiat': ('Mobi', 'Argo', 'Pulse', 'Cronos', 'Fiorino'),
+    'Volkswagen': ('Polo', 'Jeta', 'Gol', 'Voyage', 'Fox')
+}
+
+opcoes_modelo = [
         inquirer.List(
             'escolha',
-            message = 'MODELOS DO TOYOTA',
-            choices = ('Corolla', 'RAV4', 'Hilux', 'Camry', 'Prius')
+            message = 'ESCOLHA O MODELO',
+            choices = marcas_modelos_correspondentes[marca]
         )
     ]
-    respostas_modelo = inquirer.prompt(modelo)
-
-elif respostas_marca['escolha'] == 'Chevrolet':
-    modelo = [
-        inquirer.List(
-            'escolha',
-            message = 'MODELOS DO CHEVROLET',
-            choices = ('Camaro', 'Cruze', 'Onix', 'Tracker', 'Spin')
-        )
-    ]
-    respostas_modelo = inquirer.prompt(modelo)
-
-elif respostas_marca['escolha'] == 'Ford':
-    modelo = [
-        inquirer.List(
-            'escolha',
-            message = 'MODELOS DA FORD',
-            choices = ('Ka', 'Ranger', 'Fiesta', 'Ecosport', 'Edge')
-        )
-    ]
-    respostas_modelo = inquirer.prompt(modelo)
-
-elif respostas_marca['escolha'] == 'Fiat':
-    modelo = [
-        inquirer.List(
-            'escolha',
-            message = 'MODELOS DA FORD',
-            choices = ('Mobi', 'Argo', 'Pulse', 'Cronos', 'Fiorino')
-        )
-    ]
-    respostas_modelo = inquirer.prompt(modelo)
-
-elif respostas_marca['escolha'] == 'Volkswagen':
-    modelo = [
-        inquirer.List(
-            'escolha',
-            message = 'MODELOS DA VOLKSWAGEN',
-            choices = ('Polo', 'Jeta', 'Gol', 'Voyage', 'Fox')
-        )
-    ]
-    respostas_modelo = inquirer.prompt(modelo)
+    
+modelo_escolhido = inquirer.prompt(opcoes_modelo)['escolha']
 
 placa = input('Digite a placa do carro: ').upper()
 
-consumo = [
-        inquirer.List(
-            'escolha',
-            message = 'CONSUMO DO CARRO (km/L)',
-            choices = ('8km/L', '10km/L', '13km/L', '15km/L', '18km/L', '20km/L', '22km/L', '25km/L')
-        )
-    ]
-respostas_consumo = inquirer.prompt(consumo)
+opcoes_carro = [
+    inquirer.List(
+        'consumo',
+        message = 'CONSUMO DO CARRO (km/L)',
+        choices = ('8km/L', '10km/L', '13km/L', '15km/L', '18km/L', '20km/L', '22km/L', '25km/L')
+    ),
+    inquirer.List(
+        'tanque',
+        message = 'NÍVEL DO TANQUE',
+        choices = ('Baixo', 'Médio', 'Alto', 'Reserva')
+    ),
+    inquirer.List(
+        'categoria',
+        message = 'CATEGORIA DO CARRO',
+        choices = ('Hatch', 'Sedan', 'SUV', 'Pick-up')
+    ),
+    inquirer.List(
+        'airbag',
+        message = 'QUANTIDADE DE AIRBAGS',
+        choices = (1, 2, 3, 4)
+    ),
+    inquirer.List(
+        'porta_mala',
+        message = 'QUANTIDADE DE LITROS NO PORTA MALA',
+        choices = (150, 200, 250, 300, 400, 500, 700)
+    ),
+    inquirer.List(
+        'conversivel',
+        message = 'CONVERSÍVEL?',
+        choices = ('SIM', 'NÃO')
+    )
+]
 
-tanque = [
-        inquirer.List(
-            'escolha',
-            message = 'NÍVEL DO TANQUE',
-            choices = ('Baixo', 'Médio', 'Alto', 'Reserva')
-        )
-    ]
-respostas_tanque = inquirer.prompt(tanque)
-
-categoria = [
-        inquirer.List(
-            'escolha',
-            message = 'CATEGORIA DO CARRO',
-            choices = ('Hatch', 'Sedan', 'SUV', 'Pick-up')
-        )
-    ]
-respostas_categoria = inquirer.prompt(categoria)
-
-airbag = [
-        inquirer.List(
-            'escolha',
-            message = 'QUANTIDADE DE AIRBAGS',
-            choices = (1, 2, 3, 4)
-        )
-    ]
-respostas_airbag = inquirer.prompt(airbag)
-
-lPortaMala = [
-        inquirer.List(
-            'escolha',
-            message = 'QUANTIDADE DE LITROS NO PORTA MALA',
-            choices = (150, 200, 250, 300, 400, 500, 700)
-        )
-    ]
-respostas_porta_mala = inquirer.prompt(lPortaMala)
-
-convers = [
-        inquirer.List(
-            'escolha',
-            message = 'CONVERSÍVEL?',
-            choices = ('SIM', 'NÃO')
-        )
-    ]
-respostas_conversivel = inquirer.prompt(convers)
+escolhas_carro = inquirer.prompt(opcoes_carro)
 
 
-carro = Resumo(marca=respostas_marca['escolha'], modelo=respostas_modelo['escolha'], placa=placa, consumo=respostas_consumo['escolha'], nivelCombustivel=respostas_tanque['escolha'], categoria=respostas_categoria['escolha'], airbags=respostas_airbag['escolha'], litrosPortaMala=respostas_porta_mala['escolha'], conversivel=respostas_conversivel['escolha'])
+carro = Carro(
+    marca=marca, modelo=modelo_escolhido,
+    placa=placa, consumo=escolhas_carro['consumo'],
+    nivelCombustivel=escolhas_carro['tanque'],
+    categoria=escolhas_carro['categoria'],
+    airbags=escolhas_carro['airbag'],
+    litrosPortaMala=escolhas_carro['porta_mala'],
+    conversivel=escolhas_carro['conversivel']
+)
+
 carro.resumo_carro()
 
 cidades = ['Campinas', 'Valinhos', 'Hortolândia', 'Sumaré', 'Vinhedo']
 
-cidade_atual = [
+cidades_kilometragem = {
+    'Campinas': 100,
+    'Valinhos': 50,
+    'Hortolândia': 150,
+    'Sumaré': 200,
+    'Vinhedo': 0
+}
+
+saida_opcoes = [
         inquirer.List(
             'escolha',
             message = 'CIDADE ATUAL',
             choices = cidades
         )
     ]
-respostas = inquirer.prompt(cidade_atual)
+cidade_saida = inquirer.prompt(saida_opcoes)['escolha']
+kilometragem_cidade_saida = cidades_kilometragem[cidade_saida]
+cidades.remove(cidade_saida)
 
-if respostas['escolha'] == 0:
-    cidade1 = 100
-
-elif respostas['escolha'] == 1:
-    cidade1 = 50
-
-elif respostas['escolha'] == 2:
-    cidade1 = 150
-
-elif respostas['escolha'] == 3:
-    cidade1 = 200
-
-elif respostas['escolha'] == 4:
-    cidade1 = 0
-
-cidades.remove(respostas['escolha'])
-
-cidade_destino = [
+destino_opcoes = [
         inquirer.List(
             'escolha',
             message = 'CIDADE DESTINO',
             choices = cidades
         )
     ]
-respostas = inquirer.prompt(cidade_destino)
+    
+cidade_chegada = inquirer.prompt(destino_opcoes)['escolha']
+kilometragem_cidade_chegada = cidades_kilometragem[cidade_chegada]
 
-if respostas['escolha'] == 0:
-    cidade2 = 100
 
-elif respostas['escolha'] == 1:
-    cidade2 = 50
+distancia_cidades = kilometragem_cidade_saida - kilometragem_cidade_chegada
 
-elif respostas['escolha'] == 2:
-    cidade2 = 150
+ia = Ia(distancia=distancia_cidades, running=False, velocidade=0)
 
-elif respostas['escolha'] == 3:
-    cidade2 = 200
-
-elif respostas['escolha'] == 4:
-    cidade2 = 0
-
-distancia_cidades = cidade1-cidade2
-
-distancia = Ia(distancia=distancia_cidades)
-Ia.velocidade = 80
-
-info = Exibir()
-thread1 = threading.Thread(target=info.atualizar).start()
+jogo = Menu(carro=carro, ia=ia)
+jogo.start()
