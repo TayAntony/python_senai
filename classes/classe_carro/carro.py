@@ -18,16 +18,37 @@ class Carro(Veiculo):
         self.litrosPortaMala = litrosPortaMala
         self.conversivel = conversivel
 
+    def resumo_carro(self):
+        print(f'''
+\033[1;34mMarca:\033[0;0m \033[1;32m{self.marca}\033[0;0m
+\033[1;34mModelo:\033[0;0m \033[1;32m{self.modelo}\033[0;0m
+\033[1;34mPlaca:\033[0;0m \033[1;32m{self.placa}\033[0;0m
+\033[1;34mConsumo (km/L):\033[0;0m \033[1;32m{self.consumo}\033[0;0m
+\033[1;34mTanque:\033[0;0m \033[1;32m{self.nivelCombustivel}\033[0;0m
+\033[1;34mCategoria:\033[0;0m \033[1;32m{self.categoria}\033[0;0m
+\033[1;34mQuantidade Airbags:\033[0;0m \033[1;32m{self.airbags}\033[0;0m
+\033[1;34mLitros do porta-mala:\033[0;0m \033[1;32m{self.litrosPortaMala}\033[0;0m
+\033[1;34mConversível?\033[0;0m \033[1;32m{self.conversivel}\033[0;0m
+''')
+
 
 class Ia:
-    running = True
-    distancia = 0
-    velocidade = 0
+    def __init__(self, running, distancia, velocidade):
+        self.running = running
+        self.distancia = distancia
+        self.velocidade = velocidade
 
 
 class Menu():
-    carteira = 500
-    def menu(opcao):
+    def __init__(self, carro, ia):
+        self.carro = carro
+        self.ia = ia
+        self.carteira = 500
+
+    def start(self):
+        self.menu()
+    
+    def menu(self):
         opcoes = [
         inquirer.List(
             'escolha',
@@ -39,91 +60,85 @@ class Menu():
         respostas = inquirer.prompt(opcoes)
 
         if respostas['escolha'] == 'Acelerar':
-            Menu.acelerar(opcao)
+            self.acelerar()
 
         elif respostas['escolha'] == 'Desacelerar':
-            Menu.desacelerar(opcao)
+            self.desacelerar()
         
         elif respostas['escolha'] == 'Manutenir':
-            Menu.manutenir(opcao)
+            self.manutenir()
 
         elif respostas['escolha'] == 'Finanças':
-            Menu.financas(opcao)
+            self.financas()
 
         elif respostas['escolha'] == 'Sair':
-            Menu.sair(opcao)
-        
-        return opcoes
-        
-    def acelerar(opcao, carteira):
-        Ia.velocidade+= 10
+            self.sair()
+            
+            
+    def acelerar(self):
+        self.ia.velocidade += 10
         print('Sua velocidade foi aumentada em 10km/h')
-        print(f'Velocidade atual: {Ia.velocidade}')
-        if Ia.velocidade >= 80:
-            print('Atenção! Velocidade máxima permitida na rodovia.')
-            if Ia.velocidade > 90:
-                print('Você recebeu uma multa de R$50,00 por excesso de velocidade!')
-                carteira -= 50
+        print(f'Velocidade atual: {self.ia.velocidade}')
+        if self.ia.velocidade > 80:
+                print('Você recebeu uma multa de R$50,00 por excesso de velocidade (Máximo 80km/h)!')
+                self.carteira -= 50
+        elif self.ia.velocidade == 80:
+            print('Atenção! Você está na velocidade máxima permitida na rodovia.')
+        self.menu()
 
-    def desacelerar(opcao):
-        Ia.velocidade-= 10
-        if Ia.velocidade == 0:
+
+    def desacelerar(self):
+        if self.ia.velocidade == 0:
             print('A velocidade já está em 0km/h!')
         else:
+            self.ia.velocidade -= 10
             print('Sua velocidade foi reduzida em 10km/h')
-            print(f'Velocidade atual: {Ia.velocidade}')
+            print(f'Velocidade atual: {self.ia.velocidade}')
+        self.menu()
 
-    def manutenir(opcao, carteira):
-        
-        mecanico = ['Trocar pneus - R$300,00', 'Trocar óleo - R$50,00', 'Lavagem completa - R$150,00', 'Calibragem - R$30,00', 'Voltar']
-        valores = [300, 50, 150, 30, 0]
+
+    def manutenir(self):
         print('Indo ao mecânico!')
+        opcoes_mecanico = [
+            'Trocar pneus - R$300,00', 
+            'Trocar óleo - R$50,00', 
+            'Lavagem completa - R$150,00', 
+            'Calibragem - R$30,00', 'Voltar'
+        ]
+        
+        valores = {
+            'Trocar pneus - R$300,00': 300,
+            'Trocar óleo - R$50,00': 50,
+            'Lavagem completa - R$150,00': 150,
+            'Calibragem - R$30,00': 30, 
+            'Voltar': 0
+        }
+        
         opcoes = [
         inquirer.List(
             'escolha',
             message = 'MECÂNICO',
-            choices = mecanico
+            choices = opcoes_mecanico
             )
         ]
 
-        respostas = inquirer.prompt(opcoes)
+        escolha = inquirer.prompt(opcoes)['escolha']
 
-        if respostas['escolha'] == 'Trocar pneus':
-            if valores[0] > carteira:
-                print('Valor insuficiente na carteira para efetuar pagamento!')
-            else:
-                print('Pagamento efetuado com sucesso! Aproveite os novos pneus')
-                carteira -= valores[0]
-            print(f'Valor na carteira: R$ {carteira},00')
+        if escolha == 'Voltar':
+            return self.menu()
 
-        elif respostas['escolha'] == 'Trocar óleo':
-            if valores[1] > carteira:
-                print('Valor insuficiente na carteira para efetuar pagamento!')
-            else:
-                print('Pagamento efetuado com sucesso! Aproveite o novo óleo')
-                carteira -= valores[1]
-            print(f'Valor na carteira: R$ {carteira},00')
+        valor = valores[escolha]
+        if valor > self.carteira:
+            print('Valor insuficiente na carteira para efetuar pagamento!')
+        else:
+            print('Pagamento efetuado com sucesso!')
+            self.carteira -= valor
+            print(f'Valor na carteira: R$ {self.carteira},00')
         
-        elif respostas['escolha'] == 'Lavagem completa':
-            if valores[2] > carteira:
-                print('Valor insuficiente na carteira para efetuar pagamento!')
-            else:
-                print('Pagamento efetuado com sucesso! Aproveite a lavagem')
-                carteira -= valores[2]
-            print(f'Valor na carteira: R$ {carteira},00')
+        self.menu()
 
-        elif respostas['escolha'] == 'Calibragem':
-            if valores[3] > carteira:
-                print('Valor insuficiente na carteira para efetuar pagamento!')
-            else:
-                print('Pagamento efetuado com sucesso! Aproveite a calibragem')
-                carteira -= valores[3]
-            print(f'Valor na carteira: R$ {carteira},00')
 
-        elif respostas['escolha'] == 'Voltar':
-            Menu.menu()
-
-    def financas(opcao, carteira):
+    def financas(self):
         opcoes = [
         inquirer.List(
             'escolha',
@@ -132,24 +147,23 @@ class Menu():
             )
         ]
 
-        respostas = inquirer.prompt(opcoes)
+        escolha = inquirer.prompt(opcoes)['escolha']
 
-        if respostas['escolha'] == 'Saldo':
-            print(f'Valor na carteira: R$ {carteira},00')
+        if escolha == 'Saldo':
+            print(f'Valor na carteira: R$ {self.carteira},00')
 
-        elif respostas['escolha'] == 'Adicionar dinheiro':
-            add = input('Digite o valor que quer adicionar: R$')
-            carteira += add
+        elif escolha == 'Adicionar dinheiro':
+            add = int(input('Digite o valor que quer adicionar: R$'))
+            self.carteira += add
             print('Valor adicionado com sucesso!')
 
-        elif respostas['escolha'] == 'Sacar':
-            saque = input('Digite o valor que quer sacar: R$')
-            carteira -= saque
+        elif escolha == 'Sacar':
+            saque = int(input('Digite o valor que quer sacar: R$'))
+            self.carteira -= saque
             print('Valor sacado com sucesso!')
 
-        elif respostas['escolha'] == 'Voltar':
-            Menu.menu()
+        self.menu()
 
-    def sair(opcao):
+    def sair(self):
         sys.exit()
         
