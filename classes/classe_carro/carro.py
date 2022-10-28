@@ -27,7 +27,7 @@ class Carro(Veiculo):
 \033[1;34mTanque:\033[0;0m \033[1;32m{self.nivelCombustivel}\033[0;0m
 \033[1;34mCategoria:\033[0;0m \033[1;32m{self.categoria}\033[0;0m
 \033[1;34mQuantidade Airbags:\033[0;0m \033[1;32m{self.airbags}\033[0;0m
-\033[1;34mLitros do porta-mala:\033[0;0m \033[1;32m{self.litrosPortaMala}\033[0;0m
+\033[1;34mPorta-mala (l):\033[0;0m \033[1;32m{self.litrosPortaMala}\033[0;0m
 \033[1;34mConversível?\033[0;0m \033[1;32m{self.conversivel}\033[0;0m
 ''')
 
@@ -38,8 +38,13 @@ class Ia:
         self.distancia = distancia
         self.velocidade = velocidade
 
+    def calculo_tempo():
+        pass
+
 
 class Menu():
+    multa = False
+    
     def __init__(self, carro, ia):
         self.carro = carro
         self.ia = ia
@@ -53,7 +58,7 @@ class Menu():
         inquirer.List(
             'escolha',
             message = 'MENU DE OPÇÕES',
-            choices = ('Acelerar', 'Desacelerar', 'Manutenir', 'Finanças', 'Sair')
+            choices = ('Acelerar', 'Desacelerar', 'Manutenir', 'Finanças', 'Abastecer', 'Sair')
             )
         ]
 
@@ -70,20 +75,21 @@ class Menu():
 
         elif respostas['escolha'] == 'Finanças':
             self.financas()
+        
+        elif respostas['escolha'] == 'Abastecer':
+            self.abastecer()
 
         elif respostas['escolha'] == 'Sair':
             self.sair()
             
             
     def acelerar(self):
+        
         self.ia.velocidade += 10
         print('Sua velocidade foi aumentada em 10km/h')
-        print(f'Velocidade atual: {self.ia.velocidade}')
+        print(f'Velocidade atual: {self.ia.velocidade}km/h')
         if self.ia.velocidade > 80:
-                print('Você recebeu uma multa de R$50,00 por excesso de velocidade (Máximo 80km/h)!')
-                self.carteira -= 50
-        elif self.ia.velocidade == 80:
-            print('Atenção! Você está na velocidade máxima permitida na rodovia.')
+            print('Atenção! Você está na velocidade máxima permitida na rodovia. CUIDADO')
         self.menu()
 
 
@@ -137,6 +143,32 @@ class Menu():
         
         self.menu()
 
+    def abastecer(self, carro:Carro):
+        print('BEM-VINDO AO POSTAY ABASTECIMENTOS')
+        print('>>> R$3,50l')
+
+        litros_abastecer = [
+            inquirer.List(
+            'abastecer',
+            message = 'ESCOLHA A QUANTIDADE DE LITROS',
+            choices = (2, 4, 5, 8, 10, 15)
+        )]
+        escolha = inquirer.prompt(litros_abastecer)['abastecer']
+
+        valor_abastecimento = escolha*3.50 
+        print(f'Você quer abastecer {escolha} litros, valor total: R${valor_abastecimento}')
+        if carro.nivelCombustivel > escolha:
+            if self.carteira > valor_abastecimento:
+                self.carteira -= valor_abastecimento
+                carro.nivelCombustivel += escolha
+                print('Abastecido com sucesso')
+                self.menu()
+            else:
+                print('Saldo insuficiente na carteira, abasteça menos ou aumente seu saldo')
+                self.menu()
+        else:
+            print('Seu tanque está quase cheio, abasteça menos')
+            self.menu()
 
     def financas(self):
         opcoes = [
