@@ -1,7 +1,11 @@
-
 import inquirer
 from carro import Carro, Veiculo, Menu
 from carro import Ia
+
+#colocar formula de velocidade por distancia para obter tempo de viagem
+#consertar abastecimento
+#criar fórmula de gasolina por km/l
+#arrumar os erros do valor na carteira para mão ser negativo
 
 marca_opcoes = [
         inquirer.List(
@@ -40,8 +44,8 @@ opcoes_carro = [
     ),
     inquirer.List(
         'tanque',
-        message = 'NÍVEL DO TANQUE',
-        choices = ('Baixo', 'Médio', 'Alto', 'Reserva')
+        message = 'LITROS DO TANQUE',
+        choices = (25, 30, 35, 40, 50)
     ),
     inquirer.List(
         'categoria',
@@ -114,6 +118,7 @@ kilometragem_cidade_chegada = cidades_kilometragem[cidade_chegada]
 
 
 distancia_cidades = kilometragem_cidade_saida - kilometragem_cidade_chegada
+print(f'A distância das cidades é de {distancia_cidades}km')
 
 ia = Ia(distancia=distancia_cidades, running=False, velocidade=0)
 
