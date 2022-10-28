@@ -5,7 +5,7 @@ from carro import Ia
 #colocar formula de velocidade por distancia para obter tempo de viagem
 #consertar abastecimento
 #criar fórmula de gasolina por km/l
-#arrumar os erros do valor na carteira para mão ser negativo
+#arrumar os erros do valor na carteira para não ser negativo
 
 marca_opcoes = [
         inquirer.List(
