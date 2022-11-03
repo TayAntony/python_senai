@@ -3,7 +3,7 @@ from carro import Carro, Veiculo, Menu
 from carro import Ia
 
 #colocar formula de velocidade por distancia para obter tempo de viagem
-#consertar abastecimento
+#consertar abastecimento que pede o argumento carro
 #criar fórmula de gasolina por km/l
 #arrumar os erros do valor na carteira para não ser negativo
 
