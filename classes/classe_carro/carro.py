@@ -38,14 +38,19 @@ class Ia:
         self.distancia = distancia
         self.velocidade = velocidade
 
-    def calculo_tempo():
-        pass
+    def calculo_tempo(self):
+        if self.velocidade > 0:
+            self.running = True
+            tempo = self.distancia/self.velocidade
+            print(f'A viagem demorará {tempo} horas/minutos')
+        else:
+            self.running = False
+            print('O carro está parado...')
+
 
 
 class Menu():
-    multa = False
-    
-    def __init__(self, carro, ia):
+    def __init__(self, carro:Carro, ia:Ia):
         self.carro = carro
         self.ia = ia
         self.carteira = 500
@@ -90,6 +95,7 @@ class Menu():
         print(f'Velocidade atual: {self.ia.velocidade}km/h')
         if self.ia.velocidade > 80:
             print('Atenção! Você está na velocidade máxima permitida na rodovia. CUIDADO')
+        self.ia.calculo_tempo()
         self.menu()
 
 
@@ -100,6 +106,7 @@ class Menu():
             self.ia.velocidade -= 10
             print('Sua velocidade foi reduzida em 10km/h')
             print(f'Velocidade atual: {self.ia.velocidade}')
+        self.ia.calculo_tempo()
         self.menu()
 
 
@@ -140,12 +147,12 @@ class Menu():
             print('Pagamento efetuado com sucesso!')
             self.carteira -= valor
             print(f'Valor na carteira: R$ {self.carteira},00')
-        
+        self.ia.calculo_tempo()
         self.menu()
 
-    def abastecer(self, carro:Carro):
+    def abastecer(self, tanque):
         print('BEM-VINDO AO POSTAY ABASTECIMENTOS')
-        print('>>> R$3,50l')
+        print('>>> R$3,50L')
 
         litros_abastecer = [
             inquirer.List(
@@ -157,10 +164,10 @@ class Menu():
 
         valor_abastecimento = escolha*3.50 
         print(f'Você quer abastecer {escolha} litros, valor total: R${valor_abastecimento}')
-        if carro.nivelCombustivel > escolha:
+        if self.carro.nivelCombustivel > escolha:
             if self.carteira > valor_abastecimento:
                 self.carteira -= valor_abastecimento
-                carro.nivelCombustivel += escolha
+                self.carro.nivelCombustivel += escolha
                 print('Abastecido com sucesso')
                 self.menu()
             else:
@@ -169,6 +176,7 @@ class Menu():
         else:
             print('Seu tanque está quase cheio, abasteça menos')
             self.menu()
+        self.ia.calculo_tempo()
 
     def financas(self):
         opcoes = [
