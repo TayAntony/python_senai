@@ -2,9 +2,8 @@ import inquirer
 from carro import Carro, Veiculo, Menu
 from carro import Ia
 
-#colocar formula de velocidade por distancia para obter tempo de viagem
-#consertar abastecimento que pede o argumento carro
-#criar fórmula de gasolina por km/l
+#arrumar formula de velocidade por distancia 
+#consertar abastecimento
 #arrumar os erros do valor na carteira para não ser negativo
 
 marca_opcoes = [
@@ -121,6 +120,6 @@ distancia_cidades = kilometragem_cidade_saida - kilometragem_cidade_chegada
 print(f'A distância das cidades é de {distancia_cidades}km')
 
 ia = Ia(distancia=distancia_cidades, running=False, velocidade=0)
-
+ia.calculo_tempo()
 jogo = Menu(carro=carro, ia=ia)
 jogo.start()
