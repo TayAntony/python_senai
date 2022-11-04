@@ -2,9 +2,7 @@ import inquirer
 from carro import Carro, Veiculo, Menu
 from carro import Ia
 
-#arrumar formula de velocidade por distancia 
-#consertar abastecimento
-#arrumar os erros do valor na carteira para não ser negativo
+#fazer threading
 
 marca_opcoes = [
         inquirer.List(
@@ -39,10 +37,10 @@ opcoes_carro = [
     inquirer.List(
         'consumo',
         message = 'CONSUMO DO CARRO (km/L)',
-        choices = ('8km/L', '10km/L', '13km/L', '15km/L', '18km/L', '20km/L', '22km/L', '25km/L')
+        choices = (8, 10, 13, 15, 18, 20, 22, 25)
     ),
     inquirer.List(
-        'tanque',
+        'nivelcombs',
         message = 'LITROS DO TANQUE',
         choices = (25, 30, 35, 40, 50)
     ),
@@ -74,7 +72,7 @@ escolhas_carro = inquirer.prompt(opcoes_carro)
 carro = Carro(
     marca=marca, modelo=modelo_escolhido,
     placa=placa, consumo=escolhas_carro['consumo'],
-    nivelCombustivel=escolhas_carro['tanque'],
+    nivelCombustivel=escolhas_carro['nivelcombs'],
     categoria=escolhas_carro['categoria'],
     airbags=escolhas_carro['airbag'],
     litrosPortaMala=escolhas_carro['porta_mala'],
@@ -116,10 +114,16 @@ cidade_chegada = inquirer.prompt(destino_opcoes)['escolha']
 kilometragem_cidade_chegada = cidades_kilometragem[cidade_chegada]
 
 
-distancia_cidades = kilometragem_cidade_saida - kilometragem_cidade_chegada
-print(f'A distância das cidades é de {distancia_cidades}km')
+distancia_cidades = (kilometragem_cidade_saida - kilometragem_cidade_chegada)
 
-ia = Ia(distancia=distancia_cidades, running=False, velocidade=0)
+if distancia_cidades < 0:
+    distancia_cidades *= -1
+    print(f'\033[33mA distância das cidades é de {distancia_cidades}km\033[0;0m')
+else:
+    print(f'\033[33mA distância das cidades é de {distancia_cidades}km\033[0;0m')
+
+ia = Ia(distancia=distancia_cidades, running=False, velocidade=0, consumo=carro.consumo)
+
 ia.calculo_tempo()
-jogo = Menu(carro=carro, ia=ia)
+jogo = Menu(carro=carro, ia=ia, nivelCombustivel=carro.nivelCombustivel)
 jogo.start()
